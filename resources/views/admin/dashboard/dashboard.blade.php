@@ -95,7 +95,7 @@
                                     <span class="avatar bg-danger rounded-circle"><i
                                             class="ti ti-calendar-heart fs-24"></i></span>
                                     <div class="text-end">
-                                       
+
                                         <p class="fs-13 mb-0">in last 7 Days </p>
                                     </div>
                                 </div>
@@ -123,7 +123,7 @@
                                     <span class="avatar bg-info rounded-circle"><i
                                             class="ti ti-calendar-heart fs-24"></i></span>
                                     <div class="text-end">
-                                       
+
                                         <p class="fs-13 mb-0">in last 7 Days </p>
                                     </div>
                                 </div>
@@ -186,7 +186,7 @@
 
                 <div class="row">
                     <!-- col start -->
-                    <div class="col-xl-12">
+                    <div class="col-xl-6">
 
                         <!-- card start -->
                         <div class="card shadow-sm flex-fill w-100">
@@ -199,6 +199,25 @@
                                 <div class="chart-set" id="s-col-720"></div>
                             </div>
                         </div>
+                        <!-- card end -->
+
+
+
+                    </div>
+                    <!-- col end -->
+
+                    <!-- col start -->
+                    <div class="col-xl-6">
+
+                        <!-- card start -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Statistics Base On Blood Type</div>
+                            </div>
+                            <div class="card-body chart-set">
+                                <div class="h-250" id="flotPie2"></div>
+                            </div><!-- end card body -->
+                        </div><!-- end card -->
                         <!-- card end -->
 
 
@@ -229,6 +248,40 @@
 
     @include('admin.layouts.footer')
     @include('admin.dashboard.dashboard_js')
+
+
+    <script src="{{ url('assets/admin/js/jquery.flot.js') }}"></script>
+    <script src="{{ url('assets/admin/js/jquery.flot.fillbetween.js') }}"></script>
+    <script src="{{ url('assets/admin/js/jquery.flot.pie.js') }}"></script>
+
+    <script>
+        var piedata = {!! json_encode($piedata) !!};
+
+        $.plot('#flotPie2', piedata, {
+            series: {
+                pie: {
+                    show: true,
+                    radius: 1,
+                    innerRadius: 0.5,
+                    label: {
+                        show: true,
+                        radius: 2 / 3,
+                        formatter: labelFormatter,
+                        threshold: 0.1
+                    }
+                }
+            },
+            grid: {
+                hoverable: false,
+                clickable: true
+            }
+        });
+
+        function labelFormatter(label, series) {
+            return '<div style="font-size:8pt; text-align:center; padding:2px; color:white;">' +
+                label + '<br/>' + Math.round(series.percent) + '%</div>';
+        }
+    </script>
 
 
 </body>

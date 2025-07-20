@@ -96,7 +96,7 @@ class DashboardController extends Controller
         ];
 
 
-         $monthlyRequestCounts = DB::table('request_bloods')
+        $monthlyRequestCounts = DB::table('request_bloods')
             ->selectRaw('MONTH(created_at) as month, COUNT(*) as count')
             ->groupBy('month')
             ->orderBy('month')
@@ -107,7 +107,7 @@ class DashboardController extends Controller
         $counts2 = [];
 
         foreach ($monthlyRequestCounts as $data) {
-            $months2[] = Carbon::create()->month($data->month)->format('M'); // Jan, Feb, etc.
+            $months2[] = Carbon::create()->month($data->month)->format('M');
             $counts2[] = $data->count;
         }
 
@@ -115,6 +115,25 @@ class DashboardController extends Controller
             'categories' => $months2,
             'series' => $counts2
         ];
+
+
+        $bloodGroupCounts = DB::table('request_bloods')
+            ->select('blood_group', DB::raw('COUNT(*) as count'))
+            ->groupBy('blood_group')
+            ->get();
+
+        // Prepare data for the chart
+        $piedata = [];
+        $colors = ['#664dc9', '#44c4fa', '#38cb89', '#ef4b4b', '#ffab00', '#00c8c8', '#ff6f61', '#7d5fff']; // Add more colors if needed
+
+        foreach ($bloodGroupCounts as $index => $data) {
+            $piedata[] = [
+                'label' => $data->blood_group,
+                'data' => [[1, $data->count]],
+                'color' => $colors[$index % count($colors)]
+            ];
+        }
+
 
 
         return view('admin.dashboard.dashboard', compact(
@@ -125,7 +144,8 @@ class DashboardController extends Controller
             'countUsCount',
             'contactChartData',
             'monthlyDonorChartData',
-            'monthlyRequestChartData'
+            'monthlyRequestChartData',
+            'piedata'
         ));
     }
 }
